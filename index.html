@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <style>
+    body { margin:0;position:fixed;top:0;right:0;bottom:0;left:0; }
+    div.group { margin-bottom: 20px}
+  </style>
+</head>
+
+<body>
+  <h1></h1>
+  <h2>Matchday <span></span></h2>
+  <div id="table"></div>
+  <script>
+    d3.json('http://api.football-data.org/v1/competitions/467/leagueTable', {
+    	headers: {
+      	'X-Auth-Token': '2730f4455d51414f8a6b86e274176d91'
+      }
+    }).then(function (data) {
+      d3.select('h1').text(data.leagueCaption)
+      d3.select('h2 span').text(data.matchday)
+      let standings = data.standings
+      let standingsArray = []
+      Object.keys(standings).forEach((el) => {
+        
+        standingsArray.push({
+          group: el,
+          standings: standings[el]})
+      })
+      let t = d3.select('div#table')
+      let rows = t.selectAll('div.group')
+      let groups = rows.data(standingsArray).enter()
+        .append('div')
+      	.classed('group', true)
+      groups.text((d) => {
+        return d.group
+      })
+      let gr= groups.selectAll('div.group-row')
+      let newRows = gr.data((d) => {
+        return d.standings
+      }).enter()
+
+      let rows2 = newRows.append('div')
+        .classed('group-row', true)
+      
+            rows2.append('img')
+      .attr('src', (d) => {
+        return d.crestURI
+      })
+      .attr('width', '30px')
+      .style('border', '1px solid grey')
+ 
+      rows2.append('span').text((d) => { return d.team})
+      console.log(data)
+    })
+  </script>
+</body>
