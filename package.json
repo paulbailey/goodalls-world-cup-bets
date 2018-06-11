@@ -1,4 +1,7 @@
 {
+  "now": {
+    "alias": "bet-with-goodall"
+  },
   "scripts": {
     "start": "node app.js"
   },
